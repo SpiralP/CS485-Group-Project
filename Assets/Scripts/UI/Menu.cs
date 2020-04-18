@@ -13,8 +13,8 @@ public class Menu : MonoBehaviour
 
     void Start()
     {
-        MusicMixer.SetFloat("MusicVol", PlayerPrefs.GetFloat("MusicVolume"));
-        SFXMixer.SetFloat("SFXVol", PlayerPrefs.GetFloat("SFXVol"));
+        //MusicMixer.SetFloat("MusicVol", PlayerPrefs.GetFloat("MusicVolume"));
+        //SFXMixer.SetFloat("SFXVol", PlayerPrefs.GetFloat("SFXVol"));
 
         // load player data here, maybe move the audio volumes in there too
         // LoadPlayerData() ?
