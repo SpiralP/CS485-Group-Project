@@ -10,9 +10,11 @@ jobs:
         unityVersion:
           - 2019.3.2f1
         targetPlatform:
-          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          - Android # Build an Android .apk standalone app.
+          - iOS # Build an iOS player.
 
     steps:
       - uses: actions/checkout@v2
@@ -24,6 +26,14 @@ jobs:
           restore-keys: |
             Library-${{ matrix.unityVersion }}-
             Library-
+
+      - name: free disk space
+        run: |
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo apt clean
+          docker rmi $(docker image ls -aq)
+          df -h
 
       - uses: webbertakken/unity-builder@v0.12
         env:
