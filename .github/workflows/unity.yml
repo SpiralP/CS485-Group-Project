@@ -1,0 +1,38 @@
+name: Unity
+on: [push]
+jobs:
+  buildForSomePlatforms:
+    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        unityVersion:
+          - 2019.3.2f1
+        targetPlatform:
+          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v1
+        with:
+          path: Library
+          key: Library-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}
+          restore-keys: |
+            Library-${{ matrix.unityVersion }}-
+            Library-
+
+      - uses: webbertakken/unity-builder@v0.12
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build
