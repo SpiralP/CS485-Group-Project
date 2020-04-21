@@ -34,8 +34,7 @@ public class Menu : MonoBehaviour
     {
         SFXSource.clip = affirm;
         SFXSource.Play();
-
-        Initiate.Fade("Level1", Color.black, 1.5f);   // change to current level player is on
+        SceneManager.LoadScene("Loading");
     }
 
     public void BackSound ()

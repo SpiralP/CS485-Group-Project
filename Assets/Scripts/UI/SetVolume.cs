@@ -9,7 +9,7 @@ public class SetVolume : MonoBehaviour
     void Start()
     {
         mixer.SetFloat("MusicVol", PlayerPrefs.GetFloat("MusicVolumeLevel", 1f));
-        slider.value = PlayerPrefs.GetFloat("MusicSliderValue");
+        slider.value = PlayerPrefs.GetFloat("MusicSliderValue", 1f);
     }
 
     public void SetLevel (float sliderValue)
