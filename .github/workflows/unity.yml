@@ -14,7 +14,8 @@ jobs:
           - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
           - Android # Build an Android .apk standalone app.
-          - iOS # Build an iOS player.
+          # - iOS # Build an iOS player.
+          # disabled because iOS took 1 hour and gave a 1GB Build file :(
 
     steps:
       - uses: actions/checkout@v2
