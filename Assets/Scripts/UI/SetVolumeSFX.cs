@@ -6,16 +6,17 @@ public class SetVolumeSFX : MonoBehaviour
 {
     public AudioMixer mixer;
     public Slider slider;
-    
     void Start()
     {
-        mixer.SetFloat("SFXVol", PlayerPrefs.GetFloat("SFXVol", 1f));
-        slider.value = PlayerPrefs.GetFloat("SFXVol");
+        mixer.SetFloat("SFXVol", PlayerPrefs.GetFloat("SFXVolumeLevel", 1f));
+        slider.value = PlayerPrefs.GetFloat("SFXSliderValue");
     }
 
-    public void SetLevel (float sliderValue)
+    public void SetLevel(float sliderValue)
     {
-        mixer.SetFloat ("SFXVol", Mathf.Log10(sliderValue) * 20 );
-        PlayerPrefs.SetFloat("SFXVol", sliderValue);
+        float value = Mathf.Log10(sliderValue) * 20;
+        AudioManager.instance.AdjustSFXVolume(value);
+        PlayerPrefs.SetFloat("SFXSliderValue", sliderValue);
+        PlayerPrefs.Save();
     }
 }

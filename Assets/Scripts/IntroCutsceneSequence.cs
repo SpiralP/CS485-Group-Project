@@ -7,8 +7,7 @@ public class IntroCutsceneSequence : MonoBehaviour
     public GameObject gameCam;
     public GameObject cam1;
     public GameObject cam2;
-    public AudioSource sfx;
-   
+
     void Start()
     {
         // start cutscene
