@@ -2,20 +2,17 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class IntroCutsceneSequence : MonoBehaviour
-{
+public class IntroCutsceneSequence : MonoBehaviour {
     public GameObject gameCam;
     public GameObject cam1;
     public GameObject cam2;
 
-    void Start()
-    {
+    void Start() {
         // start cutscene
         StartCoroutine(TheSequence());
     }
 
-    IEnumerator TheSequence()
-    {
+    IEnumerator TheSequence() {
         yield return new WaitForSeconds(3.33f);
         cam2.SetActive(true);
         cam1.SetActive(false);

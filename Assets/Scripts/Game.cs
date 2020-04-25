@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Game : MonoBehaviour
-{
+public class Game : MonoBehaviour {
+
+    public static HashSet<Vector2> OccupiedGrid = new HashSet<Vector2>();
+
     /// # of positions you can go to the right
     /// only positions to the right
-    public int gridPositionsX = 2;
+    public const int gridPositionsX = 2;
 
     /// # of positions you can go upward
-    public int gridPositionsY = 2;
+    public const int gridPositionsY = 2;
 
+    public GameObject enemyPrefab;
     public GameObject[] asteroidPrefabs;
-    public Transform spawnPlane;
-    public float spawnInterval = 1f;
+    public Transform spawnPosition;
+    public Transform movementPlane;
+    public float spawnInterval = 0.25f;
     public float asteroidSpeed = 20f;
     private float currentTime = 0f;
     private float elapsedTime = 0f;
@@ -35,46 +39,62 @@ public class Game : MonoBehaviour
     private Vector3 center = new Vector3(0f, 0f, 0f);
     public float endTime;
 
-    void Start()
-    {
+    void Start() {
         music.clip = gameSong;
         music.Play();
-        stepX = (spawnPlane.localScale.x * 5f) / gridPositionsX;
-        stepY = (spawnPlane.localScale.z * 5f) / gridPositionsY;
+        stepX = (movementPlane.localScale.x * 5f) / gridPositionsX;
+        stepY = (movementPlane.localScale.z * 5f) / gridPositionsY;
     }
 
-    void Update()
-    {
+    void Update() {
         currentTime += Time.deltaTime;
         elapsedTime += Time.deltaTime;
-        Debug.Log(elapsedTime);
         // start spawning asteroids after cutscene ends
-        if (elapsedTime > 6.0f && elapsedTime < endTime)
-        {
-            if (currentTime > spawnInterval)
-            {
+        if (elapsedTime > 6.0f && elapsedTime < endTime) {
+            if (currentTime > spawnInterval) {
                 currentTime = 0f;
-                float posX = Random.Range(-gridPositionsX + 1, gridPositionsX) * stepX;
-                float posY = Random.Range(-gridPositionsY + 1, gridPositionsY) * stepY;
-                float posZ = spawnPlane.position.z;
 
-                int asteroidIndex = Random.Range(0, asteroidPrefabs.Length);
-                GameObject asteroid = Instantiate(asteroidPrefabs[asteroidIndex], new Vector3(posX, posY, posZ), Quaternion.identity);
-                Destroy(asteroid, 30f);
+                var gridX = Random.Range(-gridPositionsX + 1, gridPositionsX);
+                var gridY = Random.Range(-gridPositionsY + 1, gridPositionsY);
 
-                Rigidbody body = asteroid.GetComponent<Rigidbody>();
-                body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
-                body.AddRelativeTorque(Vector3.up * 10);
+                if (OccupiedGrid.Contains(new Vector2(gridX, gridY))) { return; }
+
+                var pos = new Vector3(
+                    gridX * stepX,
+                    gridY * stepY,
+                    spawnPosition.position.z
+                );
+
+                if (Random.Range(0, 5) == 0) {
+                    // an enemy
+                    // int enemyIndex = Random.Range(0, enemyPrefabs.Length);
+                    GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.Euler(0, 180, 0));
+                    Destroy(enemy, 30f);
+
+                    var enemyLogic = enemy.GetComponent<EnemyLogic>();
+                    enemyLogic.gridX = gridX;
+                    enemyLogic.gridY = gridY;
+
+                    Rigidbody body = enemy.GetComponent<Rigidbody>();
+                    body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
+                } else {
+                    // an asteroid
+                    int asteroidIndex = Random.Range(0, asteroidPrefabs.Length);
+                    GameObject asteroid = Instantiate(asteroidPrefabs[asteroidIndex], pos, Quaternion.identity);
+                    Destroy(asteroid, 30f);
+
+                    Rigidbody body = asteroid.GetComponent<Rigidbody>();
+                    body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
+                    body.AddRelativeTorque(Vector3.up * 10);
+                }
             }
         }
-        if (elapsedTime > endTime && !levelComplete)
-        {
+        if (elapsedTime > endTime && !levelComplete) {
             StartCoroutine(FinishLevel());
         }
     }
 
-    IEnumerator FinishLevel()
-    {
+    IEnumerator FinishLevel() {
         levelComplete = true;
         yield return new WaitForSeconds(3);
         sfx.clip = finish;
@@ -97,19 +117,16 @@ public class Game : MonoBehaviour
         levelCompleteUI.SetActive(true);
     }
 
-    public void ReturnToMainMenu()
-    {
+    public void ReturnToMainMenu() {
         // save game here
         Initiate.Fade("Main Menu", Color.black, 1f);
     }
 
-    public void NextLevel()
-    {
+    public void NextLevel() {
         // load current level index + 1
     }
 
-    public void ButtonSound()
-    {
+    public void ButtonSound() {
         sfx.clip = button;
         sfx.Play();
     }

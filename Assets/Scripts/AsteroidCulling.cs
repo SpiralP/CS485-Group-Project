@@ -4,32 +4,24 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class CollisionDeleteEvent : UnityEvent<GameObject>
-{
-}
+public class CollisionDeleteEvent : UnityEvent<GameObject> { }
 
-public class AsteroidCulling : MonoBehaviour
-{
+public class AsteroidCulling : MonoBehaviour {
   public CollisionDeleteEvent asteroidCollide;
   // Start is called before the first frame update
-  void Start()
-  {
+  void Start() {
     asteroidCollide = new CollisionDeleteEvent();
-    asteroidCollide.AddListener(Collide);
+    asteroidCollide.AddListener(CollideListener);
   }
 
-
   // Update is called once per frame
-  void OnCollisionEnter(Collision collision)
-  {
-    if (collision.gameObject.tag == "Asteroid")
-    {
+  void OnCollisionEnter(Collision collision) {
+    if (collision.gameObject.tag == "Asteroid" || collision.gameObject.tag == "Bullet" || collision.gameObject.tag == "Enemy") {
       asteroidCollide.Invoke(collision.gameObject);
     }
   }
 
-  void Collide(GameObject asteroid)
-  {
+  void CollideListener(GameObject asteroid) {
     Destroy(asteroid);
   }
 }
