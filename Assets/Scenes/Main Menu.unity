@@ -5228,6 +5228,7 @@ MonoBehaviour:
   back: {fileID: 8300000, guid: ce82e0423fd5a71468dcdff6ccbc6156, type: 3}
   MusicMixer: {fileID: 24100000, guid: 7ba8acecb239055489459dcad7e0859b, type: 2}
   SFXMixer: {fileID: 24100000, guid: c8bcbfada3955ba4287da80617055807, type: 2}
+  player: {fileID: 1667971084}
 --- !u!1 &1260571559
 GameObject:
   m_ObjectHideFlags: 0
@@ -7858,6 +7859,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1654468325}
   m_CullTransparentMesh: 0
+--- !u!1 &1667971083
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1667971085}
+  - component: {fileID: 1667971084}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1667971084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667971083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35ec97e40a6551641be7e84fc6f6c149, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 3
+  lives: 3
+  currentLevel: 1
+  totalscore: 0
+  lifetimebestscore: 0
+--- !u!4 &1667971085
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667971083}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -24.019228, y: 22.882315, z: -1177.3539}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1679939107
 GameObject:
   m_ObjectHideFlags: 0

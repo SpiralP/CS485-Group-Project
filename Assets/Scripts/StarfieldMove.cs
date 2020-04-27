@@ -18,9 +18,12 @@ public class StarfieldMove : MonoBehaviour
   {
     //Target += Time.deltaTime / 125;
 
-    transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, Target), speed);
+    if (Time.timeScale == 1.0f)
+    {
+      transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, Target), speed);
+    }
 
-    if (transform.position.z >= maxDist)
+        if (transform.position.z >= maxDist)
     {
       Target = minDist;
     }

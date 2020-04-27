@@ -10,6 +10,7 @@ public class Menu : MonoBehaviour
     public AudioClip back;
     public AudioMixer MusicMixer;
     public AudioMixer SFXMixer;
+    public Player player;
 
 
     private void Awake()
@@ -20,8 +21,7 @@ public class Menu : MonoBehaviour
 
     void Start()
     {
-        // load player data here, maybe move the audio volumes in there too
-        // LoadPlayerData() ?
+        player.LoadPlayer();
     }
 
     public void ForwardSound()
