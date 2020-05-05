@@ -24,16 +24,26 @@ public class ShipCollision : MonoBehaviour
   public static float ArmorPowerupStartTime = 0f;
 
   public const uint MaxShipHealth = 3;
-  public static uint ShipHealth = MaxShipHealth;
+  public static uint ShipHealth;
 
   public GameObject parentShipObject;
   public ObjectHitShipEvent objectHitShipEvent;
   public ShipDeathEvent shipDeathEvent;
   public PowerupHitShipEvent powerupHitShipEvent;
-
+  public AudioSource sfx;
+  public AudioClip powerupGet;
+  public AudioClip damageTaken;
+  public AudioClip playerDeath;
+  public AudioClip activateShield;
+  public AudioClip asteroidHitOnArmor;
+  private bool invuln;
+  public Player player;
 
   void Start()
   {
+    ShipHealth = 3;
+    player.LoadPlayer();
+    Debug.Log("Lives: " + player.lives + ", Health: " + ShipHealth);
     objectHitShipEvent = new ObjectHitShipEvent();
     objectHitShipEvent.AddListener(ObjectHitShip);
 
@@ -48,12 +58,14 @@ public class ShipCollision : MonoBehaviour
   {
     if (collision.gameObject.tag == "Asteroid" || collision.gameObject.tag == "Bullet" || collision.gameObject.tag == "Enemy")
     {
-      Debug.Log("hurt");
+      Debug.Log("Hit. Health: " + ShipHealth);
       objectHitShipEvent.Invoke(collision.gameObject);
     }
     if (collision.gameObject.tag == "Armor" || collision.gameObject.tag == "Health" || collision.gameObject.tag == "Power")
     {
-      Debug.Log("powerup");
+      //Debug.Log("powerup");
+      sfx.clip = powerupGet;
+      sfx.Play();
       powerupHitShipEvent.Invoke(collision.gameObject);
     }
   }
@@ -61,23 +73,97 @@ public class ShipCollision : MonoBehaviour
   void ObjectHitShip(GameObject obj)
   {
     Destroy(obj);
+    // has armor powerup
     if (ArmorPowerupStartTime != 0f)
     {
-      // do nothing we invincible baby
+      // hitting an asteroid while armor is active - thud sound. Let's player know they've tanked hits and survived.
+      if (obj.tag == "Asteroid")
+      {
+        sfx.clip = asteroidHitOnArmor;
+        sfx.Play();
+      }
     }
+
+    // asteroid collision with no armor - instant death
+    else if (obj.tag == "Asteroid")
+    {
+        sfx.clip = playerDeath;
+        sfx.Play();
+        shipDeathEvent.Invoke(parentShipObject);
+
+        // decrement life
+        player.lives -= 1;
+
+        // game over if lives run out. Save score, go to game over scene
+        if (player.lives == 0)
+        {
+          // if player reaches a new high score in this run, save that to their lifetime best score
+          if (player.totalscore > player.lifetimebestscore)
+          {
+            player.lifetimebestscore = player.totalscore;
+            player.SavePlayer();
+          }
+          // load game over scene
+          Initiate.Fade("Game Over", Color.black, 0.2f);
+        }
+
+        // otherwise, save player data and restart this level
+        player.SavePlayer();
+        Initiate.Fade("Loading", Color.black, 1f);
+
+    }
+
+    // defeated by enemy ship
     else if (ShipHealth == 1)
     {
-      shipDeathEvent.Invoke(parentShipObject);
+      // invuln checks are for if the player clears the level, but a stray enemy bullet may still hit them 
+      // during the flyout cutscene when they have 1 health left
+      invuln = parentShipObject.GetComponent<ShipController>().isInvuln;
+      if (!invuln)
+      {
+        sfx.clip = playerDeath;
+        sfx.Play();
+        shipDeathEvent.Invoke(parentShipObject);
+
+        // decrement life
+        player.lives -= 1;
+
+        // game over if lives run out. Save score, go to game over scene
+        if (player.lives == 0)
+        {
+            // if player reaches a new high score in this run, save that to their lifetime best score
+            if (player.totalscore > player.lifetimebestscore)
+            {
+                player.lifetimebestscore = player.totalscore;
+                player.SavePlayer();
+            }
+            // load game over scene
+            Initiate.Fade("Game Over", Color.black, 0.2f);
+        }
+
+        // otherwise, save player data and restart this level
+        player.SavePlayer();
+        Initiate.Fade("Loading", Color.black, 1f);
+      }
     }
+
+    // player is hit by an enemy, but still alive
     else
     {
-      ShipHealth -= 1;
+      invuln = parentShipObject.GetComponent<ShipController>().isInvuln;
+      if (!invuln)
+      {
+        sfx.clip = damageTaken;
+        sfx.Play();
+        ShipHealth -= 1;
+      }
     }
   }
 
   void ShipDeath(GameObject ship)
   {
     Destroy(ship);
+    ShipHealth = MaxShipHealth;
   }
 
   void PowerupHitShip(GameObject powerup)
@@ -146,9 +232,11 @@ public class ShipCollision : MonoBehaviour
 
   IEnumerator ArmorPowerupLogic()
   {
+    sfx.clip = activateShield;
+    sfx.Play();
     ArmorPowerupStartTime = Time.time;
 
-    yield return new WaitForSeconds(4.0f);
+    yield return new WaitForSeconds(3.0f);
 
     ArmorPowerupStartTime = 0f;
   }

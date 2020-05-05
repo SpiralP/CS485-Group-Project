@@ -777,7 +777,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -363, y: -1370}
+  m_AnchoredPosition: {x: 401, y: -1370}
   m_SizeDelta: {x: 490.2, y: 115.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &233547564
@@ -1632,14 +1632,15 @@ MonoBehaviour:
   asteroidSpeed: 25
   sfx: {fileID: 1188775786}
   music: {fileID: 1705394131}
-  finish: {fileID: 8300000, guid: c305b77a3efe48648b8c7f197da9ea39, type: 3}
+  finish: {fileID: 8300000, guid: 5e479ebcf84534cb5aae50e77610287b, type: 3}
   exitcam: {fileID: 961960592}
   gameCam: {fileID: 751038826}
   gameSong: {fileID: 8300000, guid: 018da680a7793594c8a4fe48b2e406e8, type: 3}
   outroSong: {fileID: 8300000, guid: 0efe6e6e82f46694aacd8f958c22b8f8, type: 3}
   flyout: {fileID: 8300000, guid: 6bb5bd4a0bdc1024696e7b7a984a6f15, type: 3}
-  player: {fileID: 1182625469}
+  playerShip: {fileID: 1182625469}
   button: {fileID: 8300000, guid: 213c6ae3431846d4eaf2b930c974a2d2, type: 3}
+  enemyKilled: {fileID: 8300000, guid: f746f34dcb8774f468e924319a486fc4, type: 3}
   levelCompleteUI: {fileID: 719560962}
   endTime: 20
 --- !u!4 &644252897
@@ -2594,7 +2595,16 @@ MonoBehaviour:
   shipDeathEvent:
     m_PersistentCalls:
       m_Calls: []
-  health: 3
+  powerupHitShipEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  sfx: {fileID: 1188775786}
+  powerupGet: {fileID: 8300000, guid: c305b77a3efe48648b8c7f197da9ea39, type: 3}
+  damageTaken: {fileID: 8300000, guid: b3681e816e341d94da74a554fcfe9758, type: 3}
+  playerDeath: {fileID: 8300000, guid: bb83d4316e4a643c59edeba50f33cb8b, type: 3}
+  activateShield: {fileID: 8300000, guid: 694aed9f70899704e898d0b8e21726a6, type: 3}
+  asteroidHitOnArmor: {fileID: 8300000, guid: 54ccffcff0e195840a831a6bb06551f7, type: 3}
+  player: {fileID: 1748767427}
 --- !u!1 &1006485317
 GameObject:
   m_ObjectHideFlags: 0
@@ -2859,7 +2869,11 @@ MonoBehaviour:
     type: 3}
   bulletSpawnPos: {fileID: 954920317}
   bulletSpeed: 10
+  sfx: {fileID: 1188775786}
+  playerFire: {fileID: 8300000, guid: 4a7adf3bedc6a4a4898a4c60ff237aa3, type: 3}
+  strongPlayerFire: {fileID: 8300000, guid: 8b30df27f4da82b46a7a974f71a55f35, type: 3}
   canPlayerMove: 0
+  isInvuln: 0
 --- !u!111 &1182625472
 Animation:
   m_ObjectHideFlags: 0
@@ -4040,6 +4054,53 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1748767426
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1748767428}
+  - component: {fileID: 1748767427}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1748767427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748767426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35ec97e40a6551641be7e84fc6f6c149, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lives: 3
+  currentLevel: 1
+  totalscore: 0
+  lifetimebestscore: 0
+--- !u!4 &1748767428
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748767426}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 17
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1756280197
 GameObject:
   m_ObjectHideFlags: 0
@@ -4909,7 +4970,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 398, y: -1370}
+  m_AnchoredPosition: {x: -406, y: -1370}
   m_SizeDelta: {x: 339.3, y: 115.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2114669520

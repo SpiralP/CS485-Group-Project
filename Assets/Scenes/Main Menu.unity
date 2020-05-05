@@ -3312,8 +3312,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Your objective: fly through the asteroid belt, defeat the space pirates,
-    and retrieve the data link from each planet they destroyed. '
+  m_text: 'Your objective: defeat the space pirates. avoid collision with asteroids.
+    survive.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ad49dbf3152871148855b6332cad98a3, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: f6346b74951fa0443a5f1be2641267bf, type: 2}
@@ -3382,12 +3382,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 741052427}
-    characterCount: 133
+    characterCount: 82
     spriteCount: 0
-    spaceCount: 21
-    wordCount: 21
+    spaceCount: 10
+    wordCount: 11
     linkCount: 0
-    lineCount: 3
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -7888,7 +7888,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35ec97e40a6551641be7e84fc6f6c149, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 3
   lives: 3
   currentLevel: 1
   totalscore: 0
@@ -8400,7 +8399,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 406.4, y: -59.4}
+  m_AnchoredPosition: {x: 406.40002, y: -59.400024}
   m_SizeDelta: {x: -1532.4, y: -940.9}
   m_Pivot: {x: 0.49999994, y: 0.5}
 --- !u!114 &1735869226
@@ -8421,7 +8420,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'grants invulnerability to an asteroid collision
+  m_text: 'grants brief invulnerability to asteroid collisions
 
 
     (active item)     
@@ -8494,7 +8493,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: -0.2853388, w: 0}
   m_textInfo:
     textComponent: {fileID: 1735869226}
-    characterCount: 80
+    characterCount: 84
     spriteCount: 0
     spaceCount: 15
     wordCount: 10
@@ -10187,15 +10186,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'doubles the damage
-
-    of your weapon
+  m_text: 'your weapon will destroy enemies in one hit
 
 
-    duration: 10s
-
-    damage:
-    1 -> 2'
+    duration: 10s'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ad49dbf3152871148855b6332cad98a3, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: f6346b74951fa0443a5f1be2641267bf, type: 2}
@@ -10264,10 +10258,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 2136517112}
-    characterCount: 63
+    characterCount: 58
     spriteCount: 0
-    spaceCount: 12
-    wordCount: 12
+    spaceCount: 10
+    wordCount: 10
     linkCount: 0
     lineCount: 5
     pageCount: 1

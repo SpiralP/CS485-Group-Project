@@ -13,14 +13,11 @@ public class Menu : MonoBehaviour
     public Player player;
 
 
-    private void Awake()
-    {
-        MusicMixer.SetFloat("MusicVol", PlayerPrefs.GetFloat("MusicVol"));
-        SFXMixer.SetFloat("SFXVol", PlayerPrefs.GetFloat("SFXVol"));
-    }
 
     void Start()
     {
+        //MusicMixer.SetFloat("MusicVol", PlayerPrefs.GetFloat("MusicVol"));
+        //SFXMixer.SetFloat("SFXVol", PlayerPrefs.GetFloat("SFXVol"));
         player.LoadPlayer();
     }
 

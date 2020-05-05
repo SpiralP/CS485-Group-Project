@@ -8,6 +8,9 @@ public class ShipController : MonoBehaviour
   public GameObject bulletPrefab;
   public Transform bulletSpawnPos;
   public float bulletSpeed = 10.0f;
+  public AudioSource sfx;
+  public AudioClip playerFire;
+  public AudioClip strongPlayerFire;
 
   private float stepX;
   private float stepY;
@@ -18,12 +21,14 @@ public class ShipController : MonoBehaviour
   private int posY = 0;
 
   public bool canPlayerMove;
+  public bool isInvuln;
 
   private IEnumerator coroutine;
 
   void Start()
   {
-    canPlayerMove = true;
+    canPlayerMove = false;
+    isInvuln = false;
     stepX = (movementPlane.localScale.x * 5f) / Game.gridPositionsX;
     stepY = (movementPlane.localScale.z * 5f) / Game.gridPositionsY;
   }
@@ -93,6 +98,17 @@ public class ShipController : MonoBehaviour
   {
     while (canPlayerMove && Input.GetKey("space"))
     {
+      if (ShipCollision.PowerPowerupStartTime != 0f) 
+      { 
+        sfx.clip = strongPlayerFire;
+        sfx.Play();
+      }
+      else
+      {
+        sfx.clip = playerFire;
+        sfx.Play();
+      }
+      
       var bullet = Instantiate(bulletPrefab, bulletSpawnPos.position, Quaternion.identity);
       Destroy(bullet, 10f);
 

@@ -35,8 +35,9 @@ public class Game : MonoBehaviour
   public AudioClip gameSong;
   public AudioClip outroSong;
   public AudioClip flyout;
-  public GameObject player;
+  public GameObject playerShip;
   public AudioClip button;
+  public AudioClip enemyKilled;
   public GameObject levelCompleteUI;
   private Vector3 center = new Vector3(0f, 0f, 0f);
   public float endTime;
@@ -81,6 +82,8 @@ public class Game : MonoBehaviour
           var enemyLogic = enemy.GetComponent<EnemyLogic>();
           enemyLogic.gridX = gridX;
           enemyLogic.gridY = gridY;
+          enemyLogic.sfx = sfx;
+          enemyLogic.enemyDeath = enemyKilled;
 
           Rigidbody body = enemy.GetComponent<Rigidbody>();
           body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
@@ -115,11 +118,13 @@ public class Game : MonoBehaviour
   {
     levelComplete = true;
     yield return new WaitForSeconds(3);
+    GameObject.Find("Player Ship").GetComponent<ShipController>().isInvuln = true;
     sfx.clip = finish;
     sfx.Play();
     GameObject.Find("Player Ship").GetComponent<ShipController>().canPlayerMove = false;
     yield return new WaitForSeconds(2);
-    player.transform.position = center;
+    playerShip.transform.position = center;
+    ClearBoardOnVictory();
     exitcam.SetActive(true);
     gameCam.SetActive(false);
     GameObject.Find("Player Ship").GetComponent<Animation>().Play();
@@ -127,7 +132,7 @@ public class Game : MonoBehaviour
     sfx.clip = flyout;
     sfx.Play();
     yield return new WaitForSeconds(3);
-    player.SetActive(false);
+    playerShip.SetActive(false);
     music.Stop();
     music.clip = outroSong;
     music.Play();
@@ -150,5 +155,14 @@ public class Game : MonoBehaviour
   {
     sfx.clip = button;
     sfx.Play();
+  }
+
+  private void ClearBoardOnVictory()
+  {
+    var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+    foreach (GameObject o in enemies)
+    {
+      Destroy(o);
+    }
   }
 }

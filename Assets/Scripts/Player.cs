@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-  public int health = 3;
   public int lives = 3;
   public int currentLevel = 1;
   public int totalscore = 0;
@@ -21,9 +20,18 @@ public class Player : MonoBehaviour
     PlayerData data = SaveSystem.LoadPlayer();
 
     currentLevel = data.currentLevel;
-    health = data.health;
     lives = data.lives;
     totalscore = data.totalscore;
     lifetimebestscore = data.lifetimebestscore;
+  }
+
+  public void ResetPlayer()
+  {
+    PlayerData data = SaveSystem.LoadPlayer();
+    lives = 3;
+    currentLevel = 1;
+    totalscore = 0;
+    lifetimebestscore = data.lifetimebestscore;
+    SavePlayer();
   }
 }

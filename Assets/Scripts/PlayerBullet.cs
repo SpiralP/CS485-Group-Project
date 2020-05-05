@@ -9,5 +9,17 @@ public class PlayerBullet : MonoBehaviour
     {
       Destroy(this.gameObject);
     }
+    if (collision.gameObject.tag == "Health")
+    {
+      Destroy(this.gameObject);
+    }
+    if (collision.gameObject.tag == "Power")
+    {
+        Destroy(this.gameObject);
+    }
+    if (collision.gameObject.tag == "Armor")
+    {
+        Destroy(this.gameObject);
+    }
   }
 }
