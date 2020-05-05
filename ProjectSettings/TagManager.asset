@@ -8,6 +8,9 @@ TagManager:
   - Enemy
   - Bullet
   - PlayerBullet
+  - Armor
+  - Health
+  - Power
   layers:
   - Default
   - TransparentFX
@@ -20,7 +23,7 @@ TagManager:
   - Bullet
   - Enemy
   - PlayerBullet
-  - 
+  - Powerup
   - 
   - 
   - 

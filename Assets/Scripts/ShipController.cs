@@ -57,6 +57,16 @@ public class ShipController : MonoBehaviour
         StartShooting();
       }
 
+      // if we have an armor pickup, we haven't enabled it yet, and key is pressed
+      if (
+        ShipCollision.HasArmorPickup &&
+        ShipCollision.ArmorPowerupStartTime == 0f &&
+        Input.GetKeyDown("e")
+      )
+      {
+        GameObject.Find("Player Ship").GetComponentInChildren<ShipCollision>().ActivateArmorPowerup();
+      }
+
       transform.position = Vector3.MoveTowards(transform.position, wantedPos, 10f * Time.deltaTime);
 
     }

@@ -23,8 +23,7 @@ public class EnemyLogic : MonoBehaviour
     Game.OccupiedGrid.Add(new Vector2(gridX, gridY));
 
     enemyKilledEvent = new EnemyKilledEvent();
-    enemyKilledEvent.AddListener(Death);
-
+    enemyKilledEvent.AddListener(EnemyKilled);
   }
 
   void ShootBullet()
@@ -61,7 +60,7 @@ public class EnemyLogic : MonoBehaviour
 
   IEnumerator Burst()
   {
-    var r = Random.Range(1, 4);
+    var r = Random.Range(1, 2);
 
     for (int i = 0; i < r; i++)
     {
@@ -83,7 +82,7 @@ public class EnemyLogic : MonoBehaviour
 
       Destroy(collision.gameObject);
 
-      if (health == 0)
+      if (ShipCollision.PowerPowerupStartTime != 0f || health == 1)
       {
         enemyKilledEvent.Invoke(this.gameObject);
       }
@@ -94,9 +93,9 @@ public class EnemyLogic : MonoBehaviour
     }
   }
 
-  void Death(GameObject ship)
+  void EnemyKilled(GameObject enemy)
   {
     // TODO explosion
-    Destroy(ship);
+    Destroy(enemy);
   }
 }

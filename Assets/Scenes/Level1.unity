@@ -1301,12 +1301,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 388298715}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e5bfbd6e74a1fa44ab124d207b114b2, type: 3}
+  m_Script: {fileID: 11500000, guid: 11eff30d4ed9c174987cd00617e6974c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  asteroidCollide:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &598824753
 GameObject:
   m_ObjectHideFlags: 0
@@ -1603,6 +1600,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 1458391615630120, guid: 7ded8d92e7b76eb40a571cc4ba49baef,
     type: 3}
+  powerupPrefabs:
+  - {fileID: 7023377286949482053, guid: aa686bb67d14ab34586a7c787e9c7c9e, type: 3}
+  - {fileID: 6584063763472906469, guid: f1e9838a66b8e78429dab8d58b9eaa9d, type: 3}
+  - {fileID: 3997858419838837656, guid: f1701e2a7c4f1cc45ac0d0204e8ec49b, type: 3}
   asteroidPrefabs:
   - {fileID: 102630, guid: 678bc45fa6df37043b80d12daa3a9d51, type: 3}
   - {fileID: 152982, guid: 75204aeb0b1f4194e8dd78998abb7652, type: 3}
@@ -2586,9 +2587,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02f502a351505dc4c9b7f30c25cf1b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  asteroidCollide:
+  parentShipObject: {fileID: 1182625469}
+  objectHitShipEvent:
     m_PersistentCalls:
       m_Calls: []
+  shipDeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  health: 3
 --- !u!1 &1006485317
 GameObject:
   m_ObjectHideFlags: 0

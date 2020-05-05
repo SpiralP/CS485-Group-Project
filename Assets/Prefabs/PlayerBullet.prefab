@@ -4834,6 +4834,7 @@ GameObject:
   - component: {fileID: 3779026767311301753}
   - component: {fileID: 9220716287130767431}
   - component: {fileID: 8582165878197020619}
+  - component: {fileID: 5441041217165060055}
   m_Layer: 10
   m_Name: PlayerBullet
   m_TagString: PlayerBullet
@@ -4932,6 +4933,18 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5441041217165060055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2759482717368968202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf6fb340dd40cf64e887b748f2cf7211, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6378248425897778083
 GameObject:
   m_ObjectHideFlags: 0
