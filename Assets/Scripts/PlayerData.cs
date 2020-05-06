@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class PlayerData
-{
+public class PlayerData {
   public int lives;
   public int currentLevel;
   public int totalscore;
   public int lifetimebestscore;
 
-  public PlayerData(Player player)
-  {
+  public PlayerData(Player player) {
     lives = player.lives;
     currentLevel = player.currentLevel;
     totalscore = player.totalscore;

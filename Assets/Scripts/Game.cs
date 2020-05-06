@@ -41,6 +41,9 @@ public class Game : MonoBehaviour {
   private Vector3 center = new Vector3(0f, 0f, 0f);
   public float endTime;
 
+  private bool didBigWall = false;
+  private bool doingBigWall = false;
+
   void Start() {
     music.clip = gameSong;
     music.Play();
@@ -50,11 +53,25 @@ public class Game : MonoBehaviour {
     currentTime = 0f;
     elapsedTime = 0f;
     levelComplete = false;
+    didBigWall = false;
+    doingBigWall = false;
   }
 
   void Update() {
     currentTime += Time.deltaTime;
     elapsedTime += Time.deltaTime;
+
+    if (!didBigWall && elapsedTime > endTime * 0.8) {
+      didBigWall = true;
+      doingBigWall = true;
+
+      StartCoroutine(DoBigWall());
+    }
+
+    if (doingBigWall) {
+      return;
+    }
+
     // start spawning asteroids after cutscene ends
     if (elapsedTime > 6.0f && elapsedTime < endTime) {
       if (currentTime > spawnInterval) {
@@ -87,26 +104,77 @@ public class Game : MonoBehaviour {
 
           Rigidbody body = enemy.GetComponent<Rigidbody>();
           body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
-        } else if (Random.Range(0, 2) == 0) {
+        } else if (Random.Range(0, 10) == 0) {
           // powerup
           GameObject powerup = Instantiate(powerupPrefabs[Random.Range(0, powerupPrefabs.Length)], pos, Quaternion.identity);
           Rigidbody body = powerup.GetComponent<Rigidbody>();
           body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
         } else {
-          // an asteroid
-          int asteroidIndex = Random.Range(0, asteroidPrefabs.Length);
-          GameObject asteroid = Instantiate(asteroidPrefabs[asteroidIndex], pos, Quaternion.identity);
-          Destroy(asteroid, 30f);
-
-          Rigidbody body = asteroid.GetComponent<Rigidbody>();
-          body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
-          body.AddRelativeTorque(Vector3.up * 10);
+          SpawnAsteroid(pos);
         }
       }
     }
+
     if (elapsedTime > endTime && !levelComplete) {
       StartCoroutine(FinishLevel());
     }
+  } // Update
+
+  void SpawnAsteroid(Vector3 pos) {
+    // an asteroid
+    int asteroidIndex = Random.Range(0, asteroidPrefabs.Length);
+    GameObject asteroid = Instantiate(asteroidPrefabs[asteroidIndex], pos, Quaternion.identity);
+    Destroy(asteroid, 30f);
+
+    Rigidbody body = asteroid.GetComponent<Rigidbody>();
+    body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
+    body.AddRelativeTorque(Vector3.up * 10);
+  }
+
+  IEnumerator DoBigWall() {
+    // don't spawn objects for a couple seconds so the powerup is clear to see
+    yield return new WaitForSeconds(2.0f);
+
+    // spawn armor powerup
+    {
+      Debug.Log("spawning armor powerup");
+      int gridX;
+      int gridY;
+
+      do {
+        gridX = Random.Range(-gridPositionsX + 1, gridPositionsX);
+        gridY = Random.Range(-gridPositionsY + 1, gridPositionsY);
+      } while (OccupiedGrid.Contains(new Vector2(gridX, gridY)));
+
+      var pos = new Vector3(
+        gridX * stepX,
+        gridY * stepY,
+        spawnPosition.position.z
+      );
+
+      GameObject powerup = Instantiate(powerupPrefabs[0], pos, Quaternion.identity);
+      Rigidbody body = powerup.GetComponent<Rigidbody>();
+      body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
+    }
+
+    yield return new WaitForSeconds(3.0f);
+
+    Debug.Log("spawning wall");
+    for (int gridX = -gridPositionsX + 1; gridX < gridPositionsX; gridX++) {
+      for (int gridY = -gridPositionsY + 1; gridY < gridPositionsY; gridY++) {
+        var pos = new Vector3(
+          gridX * stepX,
+          gridY * stepY,
+          spawnPosition.position.z
+        );
+
+        SpawnAsteroid(pos);
+      }
+    }
+
+    yield return new WaitForSeconds(1.0f);
+    // start spawning other objects behind the wall
+    doingBigWall = false;
   }
 
   IEnumerator FinishLevel() {
