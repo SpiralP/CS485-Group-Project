@@ -16,6 +16,7 @@ public class Game : MonoBehaviour {
 
   public GameObject enemyPrefab;
   public GameObject[] powerupPrefabs;
+  public GameObject armorPowerupPrefab;
   public GameObject[] asteroidPrefabs;
   public Transform spawnPosition;
   public Transform movementPlane;
@@ -152,12 +153,12 @@ public class Game : MonoBehaviour {
         spawnPosition.position.z
       );
 
-      GameObject powerup = Instantiate(powerupPrefabs[0], pos, Quaternion.identity);
+      GameObject powerup = Instantiate(armorPowerupPrefab, pos, Quaternion.identity);
       Rigidbody body = powerup.GetComponent<Rigidbody>();
       body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
     }
 
-    yield return new WaitForSeconds(0.25f);
+    yield return new WaitForSeconds(1.0f);
 
     Debug.Log("spawning wall");
     for (int gridX = -gridPositionsX + 1; gridX < gridPositionsX; gridX++) {

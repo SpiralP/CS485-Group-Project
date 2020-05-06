@@ -1601,9 +1601,10 @@ MonoBehaviour:
   enemyPrefab: {fileID: 1458391615630120, guid: 7ded8d92e7b76eb40a571cc4ba49baef,
     type: 3}
   powerupPrefabs:
-  - {fileID: 7023377286949482053, guid: aa686bb67d14ab34586a7c787e9c7c9e, type: 3}
   - {fileID: 6584063763472906469, guid: f1e9838a66b8e78429dab8d58b9eaa9d, type: 3}
   - {fileID: 3997858419838837656, guid: f1701e2a7c4f1cc45ac0d0204e8ec49b, type: 3}
+  armorPowerupPrefab: {fileID: 7023377286949482053, guid: aa686bb67d14ab34586a7c787e9c7c9e,
+    type: 3}
   asteroidPrefabs:
   - {fileID: 102630, guid: 678bc45fa6df37043b80d12daa3a9d51, type: 3}
   - {fileID: 152982, guid: 75204aeb0b1f4194e8dd78998abb7652, type: 3}
@@ -2443,7 +2444,7 @@ GameObject:
   m_Component:
   - component: {fileID: 954920317}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: BulletPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2457,7 +2458,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 954920316}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.392}
+  m_LocalPosition: {x: 0.025, y: 0, z: -1.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1182625470}
