@@ -6,8 +6,7 @@ using UnityEngine.Events;
 public class EnemyKilledEvent : UnityEvent<GameObject> { }
 
 /// shoots at you???
-public class EnemyLogic : MonoBehaviour
-{
+public class EnemyLogic : MonoBehaviour {
   public EnemyKilledEvent enemyKilledEvent;
   public Transform bulletSpawnPos;
   public GameObject bulletPrefab;
@@ -19,8 +18,7 @@ public class EnemyLogic : MonoBehaviour
   public int gridX, gridY;
   private uint health = 3;
 
-  void Start()
-  {
+  void Start() {
     myRigidBody = GetComponent<Rigidbody>();
     Game.OccupiedGrid.Add(new Vector2(gridX, gridY));
 
@@ -28,23 +26,19 @@ public class EnemyLogic : MonoBehaviour
     enemyKilledEvent.AddListener(EnemyKilled);
   }
 
-  void ShootBullet()
-  {
+  void ShootBullet() {
     StartCoroutine(Burst());
   }
 
   private bool running = false;
-  void Update()
-  {
-    if (!running && transform.position.z < 10)
-    {
+  void Update() {
+    if (!running && transform.position.z < 10) {
       running = true;
       StartCoroutine(StopMoving());
     }
   }
 
-  IEnumerator StopMoving()
-  {
+  IEnumerator StopMoving() {
     InvokeRepeating("ShootBullet", 0.0f, 3.0f);
 
     var oldVelocity = myRigidBody.velocity;
@@ -60,12 +54,10 @@ public class EnemyLogic : MonoBehaviour
 
   }
 
-  IEnumerator Burst()
-  {
+  IEnumerator Burst() {
     var r = Random.Range(1, 2);
 
-    for (int i = 0; i < r; i++)
-    {
+    for (int i = 0; i < r; i++) {
       var bullet = Instantiate(bulletPrefab, bulletSpawnPos.position, Quaternion.identity);
       Destroy(bullet, 10f);
 
@@ -76,27 +68,24 @@ public class EnemyLogic : MonoBehaviour
     }
   }
 
-  void OnCollisionEnter(Collision collision)
-  {
-    if (collision.gameObject.tag == "PlayerBullet")
-    {
+  void OnCollisionEnter(Collision collision) {
+    if (collision.gameObject.tag == "Asteroid") {
+      Destroy(this.gameObject);
+    } else
+    if (collision.gameObject.tag == "PlayerBullet") {
       Debug.Log("hit");
 
       Destroy(collision.gameObject);
 
-      if (ShipCollision.PowerPowerupStartTime != 0f || health == 1)
-      {
+      if (ShipCollision.PowerPowerupStartTime != 0f || health == 1) {
         enemyKilledEvent.Invoke(this.gameObject);
-      }
-      else
-      {
+      } else {
         health -= 1;
       }
     }
   }
 
-  void EnemyKilled(GameObject enemy)
-  {
+  void EnemyKilled(GameObject enemy) {
     // TODO explosion
     Destroy(enemy);
     sfx.clip = enemyDeath;

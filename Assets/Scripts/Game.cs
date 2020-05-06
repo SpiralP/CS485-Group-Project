@@ -19,7 +19,7 @@ public class Game : MonoBehaviour {
   public GameObject[] asteroidPrefabs;
   public Transform spawnPosition;
   public Transform movementPlane;
-  public float spawnInterval = 0.25f;
+  public float spawnInterval = 0.3f;
   public float asteroidSpeed = 20f;
   private float currentTime = 0f;
   private float elapsedTime = 0f;
@@ -133,7 +133,7 @@ public class Game : MonoBehaviour {
 
   IEnumerator DoBigWall() {
     // don't spawn objects for a couple seconds so the powerup is clear to see
-    yield return new WaitForSeconds(2.0f);
+    yield return new WaitForSeconds(0.25f);
 
     // spawn armor powerup
     {
@@ -157,11 +157,15 @@ public class Game : MonoBehaviour {
       body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
     }
 
-    yield return new WaitForSeconds(3.0f);
+    yield return new WaitForSeconds(0.25f);
 
     Debug.Log("spawning wall");
     for (int gridX = -gridPositionsX + 1; gridX < gridPositionsX; gridX++) {
       for (int gridY = -gridPositionsY + 1; gridY < gridPositionsY; gridY++) {
+        // if (OccupiedGrid.Contains(new Vector2(gridX, gridY))) {
+        //   continue;
+        // }
+
         var pos = new Vector3(
           gridX * stepX,
           gridY * stepY,
@@ -172,7 +176,7 @@ public class Game : MonoBehaviour {
       }
     }
 
-    yield return new WaitForSeconds(1.0f);
+    yield return new WaitForSeconds(0.25f);
     // start spawning other objects behind the wall
     doingBigWall = false;
   }
