@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Game : MonoBehaviour
-{
+public class Game : MonoBehaviour {
 
   public static HashSet<Vector2> OccupiedGrid = new HashSet<Vector2>();
 
@@ -42,38 +41,39 @@ public class Game : MonoBehaviour
   private Vector3 center = new Vector3(0f, 0f, 0f);
   public float endTime;
 
-  void Start()
-  {
+  void Start() {
     music.clip = gameSong;
     music.Play();
     stepX = (movementPlane.localScale.x * 5f) / gridPositionsX;
     stepY = (movementPlane.localScale.z * 5f) / gridPositionsY;
+    OccupiedGrid = new HashSet<Vector2>();
+    currentTime = 0f;
+    elapsedTime = 0f;
+    levelComplete = false;
   }
 
-  void Update()
-  {
+  void Update() {
     currentTime += Time.deltaTime;
     elapsedTime += Time.deltaTime;
     // start spawning asteroids after cutscene ends
-    if (elapsedTime > 6.0f && elapsedTime < endTime)
-    {
-      if (currentTime > spawnInterval)
-      {
+    if (elapsedTime > 6.0f && elapsedTime < endTime) {
+      if (currentTime > spawnInterval) {
         currentTime = 0f;
 
         var gridX = Random.Range(-gridPositionsX + 1, gridPositionsX);
         var gridY = Random.Range(-gridPositionsY + 1, gridPositionsY);
 
-        if (OccupiedGrid.Contains(new Vector2(gridX, gridY))) { return; }
+        if (OccupiedGrid.Contains(new Vector2(gridX, gridY))) {
+          return;
+        }
 
         var pos = new Vector3(
-            gridX * stepX,
-            gridY * stepY,
-            spawnPosition.position.z
+          gridX * stepX,
+          gridY * stepY,
+          spawnPosition.position.z
         );
 
-        if (Random.Range(0, 8) == 0)
-        {
+        if (Random.Range(0, 8) == 0) {
           // an enemy
           // int enemyIndex = Random.Range(0, enemyPrefabs.Length);
           GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.Euler(0, 180, 0));
@@ -87,16 +87,12 @@ public class Game : MonoBehaviour
 
           Rigidbody body = enemy.GetComponent<Rigidbody>();
           body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
-        }
-        else if (Random.Range(0, 2) == 0)
-        {
+        } else if (Random.Range(0, 2) == 0) {
           // powerup
           GameObject powerup = Instantiate(powerupPrefabs[Random.Range(0, powerupPrefabs.Length)], pos, Quaternion.identity);
           Rigidbody body = powerup.GetComponent<Rigidbody>();
           body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
-        }
-        else
-        {
+        } else {
           // an asteroid
           int asteroidIndex = Random.Range(0, asteroidPrefabs.Length);
           GameObject asteroid = Instantiate(asteroidPrefabs[asteroidIndex], pos, Quaternion.identity);
@@ -108,14 +104,12 @@ public class Game : MonoBehaviour
         }
       }
     }
-    if (elapsedTime > endTime && !levelComplete)
-    {
+    if (elapsedTime > endTime && !levelComplete) {
       StartCoroutine(FinishLevel());
     }
   }
 
-  IEnumerator FinishLevel()
-  {
+  IEnumerator FinishLevel() {
     levelComplete = true;
     yield return new WaitForSeconds(3);
     GameObject.Find("Player Ship").GetComponent<ShipController>().isInvuln = true;
@@ -140,28 +134,23 @@ public class Game : MonoBehaviour
     levelCompleteUI.SetActive(true);
   }
 
-  public void ReturnToMainMenu()
-  {
+  public void ReturnToMainMenu() {
     // save game here
     Initiate.Fade("Main Menu", Color.black, 1f);
   }
 
-  public void NextLevel()
-  {
+  public void NextLevel() {
     // load current level index + 1
   }
 
-  public void ButtonSound()
-  {
+  public void ButtonSound() {
     sfx.clip = button;
     sfx.Play();
   }
 
-  private void ClearBoardOnVictory()
-  {
+  private void ClearBoardOnVictory() {
     var enemies = GameObject.FindGameObjectsWithTag("Enemy");
-    foreach (GameObject o in enemies)
-    {
+    foreach (GameObject o in enemies) {
       Destroy(o);
     }
   }

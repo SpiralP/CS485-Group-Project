@@ -2,31 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
-{
+public class Player : MonoBehaviour {
   public int lives = 3;
   public int currentLevel = 1;
   public int totalscore = 0;
   public int lifetimebestscore = 0;
 
-  public void SavePlayer()
-  {
+  public void SavePlayer() {
     SaveSystem.SavePlayer(this);
     Debug.Log("Saved Game");
   }
 
-  public void LoadPlayer()
-  {
+  public void LoadPlayer() {
     PlayerData data = SaveSystem.LoadPlayer();
 
-    currentLevel = data.currentLevel;
-    lives = data.lives;
-    totalscore = data.totalscore;
-    lifetimebestscore = data.lifetimebestscore;
+    if (data != null) {
+      currentLevel = data.currentLevel;
+      lives = data.lives;
+      totalscore = data.totalscore;
+      lifetimebestscore = data.lifetimebestscore;
+    }
   }
 
-  public void ResetPlayer()
-  {
+  public void ResetPlayer() {
     PlayerData data = SaveSystem.LoadPlayer();
     lives = 3;
     currentLevel = 1;
