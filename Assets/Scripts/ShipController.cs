@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
-public class ShipController : MonoBehaviour
-{
+public class ShipController : MonoBehaviour {
   public Transform movementPlane;
   public GameObject bulletPrefab;
   public Transform bulletSpawnPos;
@@ -24,46 +20,35 @@ public class ShipController : MonoBehaviour
   public bool canPlayerMove;
   public bool isInvuln;
 
-  void Start()
-  {
+  void Start() {
     canPlayerMove = false;
     isInvuln = false;
     stepX = (movementPlane.localScale.x * 5f) / Game.gridPositionsX;
     stepY = (movementPlane.localScale.z * 5f) / Game.gridPositionsY;
   }
 
-  void Update()
-  {
-    if (canPlayerMove)
-    {
+  void Update() {
+    if (canPlayerMove) {
       Vector3 wantedPos = new Vector3(posX * stepX, posY * stepY, 0);
 
-      if (Input.GetKeyDown("w"))
-      {
+      if (Input.GetKeyDown("w")) {
         MoveUp();
-      }
-      else if (Input.GetKeyDown("s"))
-      {
+      } else if (Input.GetKeyDown("s")) {
         MoveDown();
-      }
-      else if (Input.GetKeyDown("a"))
-      {
+      } else if (Input.GetKeyDown("a")) {
         MoveLeft();
-      }
-      else if (Input.GetKeyDown("d"))
-      {
+      } else if (Input.GetKeyDown("d")) {
         MoveRight();
+      } else if (Input.GetKeyDown("space")) {
+        FireBullet();
       }
-
-
 
       // if we have an armor pickup, we haven't enabled it yet, and key is pressed
       if (
         ShipCollision.HasArmorPickup &&
         ShipCollision.ArmorPowerupStartTime == 0f &&
         Input.GetKeyDown("e")
-      )
-      {
+      ) {
         GameObject.Find("Player Ship").GetComponentInChildren<ShipCollision>().ActivateArmorPowerup();
       }
 
@@ -71,48 +56,37 @@ public class ShipController : MonoBehaviour
 
     }
   }
-  public void MoveUp()
-  {
+  public void MoveUp() {
     posY = Mathf.Min(posY + 1, Game.gridPositionsY - 1);
   }
 
-  public void MoveDown()
-  {
+  public void MoveDown() {
     posY = Mathf.Max(posY - 1, -1 * Game.gridPositionsY + 1);
   }
 
-  public void MoveLeft()
-  {
+  public void MoveLeft() {
     posX = Mathf.Max(posX - 1, -1 * Game.gridPositionsX + 1);
   }
 
-  public void MoveRight()
-  {
+  public void MoveRight() {
     posX = Mathf.Min(posX + 1, Game.gridPositionsX - 1);
   }
 
-
-    public void FireBullet()
-  {
-    if (canPlayerMove)
-    {
-      if (ShipCollision.PowerPowerupStartTime != 0f) 
-      { 
+  public void FireBullet() {
+    if (canPlayerMove) {
+      if (ShipCollision.PowerPowerupStartTime != 0f) {
         sfx.clip = strongPlayerFire;
         sfx.Play();
-      }
-      else
-      {
+      } else {
         sfx.clip = playerFire;
         sfx.Play();
       }
-      
+
       var bullet = Instantiate(bulletPrefab, bulletSpawnPos.position, Quaternion.identity);
       Destroy(bullet, 10f);
 
       var rigidbody = bullet.GetComponent<Rigidbody>();
       rigidbody.velocity = new Vector3(0f, 0f, 1f * bulletSpeed);
-
     }
   }
 }

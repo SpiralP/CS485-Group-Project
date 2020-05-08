@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 
 public class Game : MonoBehaviour {
 
@@ -82,17 +82,16 @@ public class Game : MonoBehaviour {
     if (doingBigWall) {
       return;
     }
-    if (player.currentLevel == 1 && player.totalscore > 0f && elapsedTime < 6.0f) { 
-        player.totalscore = 0f;
+    if (player.currentLevel == 1 && player.totalscore > 0f && elapsedTime < 6.0f) {
+      player.totalscore = 0f;
     }
 
     if (ShipCollision.HasArmorPickup && !PauseMenu.GameIsPaused) {
       armorButton.gameObject.SetActive(true);
-    }
-    else {
+    } else {
       armorButton.gameObject.SetActive(false);
     }
-    
+
     // start spawning asteroids after cutscene ends
     if (elapsedTime > 6.0f && elapsedTime < endTime) {
       player.totalscore += Time.deltaTime * 100f;
@@ -213,7 +212,7 @@ public class Game : MonoBehaviour {
     yield return new WaitForSeconds(2);
     playerShip.transform.position = center;
     ClearBoardOnVictory();
-    Debug.Log(GM.enemiesKilledNormally + ", " + GM.enemiesKilledPowerfully);  // test if enemy killcount works
+    Debug.Log(GM.enemiesKilledNormally + ", " + GM.enemiesKilledPowerfully); // test if enemy killcount works
     exitcam.SetActive(true);
     gameCam.SetActive(false);
     GameObject.Find("Player Ship").GetComponent<Animation>().Play();
@@ -224,16 +223,16 @@ public class Game : MonoBehaviour {
     playerShip.SetActive(false);
     music.Stop();
     player.totalscore += 10000f; // make public?
-    if (!ShipCollision.HasTakenDamage) { 
-        // bonus for no damage taken
-        player.totalscore += 5000f;
+    if (!ShipCollision.HasTakenDamage) {
+      // bonus for no damage taken
+      player.totalscore += 5000f;
     }
     Debug.Log(player.totalscore + " before");
     // add points for how many enemies killed
     player.totalscore += (GM.enemiesKilledNormally * 500f);
     player.totalscore += (GM.enemiesKilledPowerfully * 1000f);
     Debug.Log(player.totalscore + " after");
-    if (player.totalscore > player.lifetimebestscore) { 
+    if (player.totalscore > player.lifetimebestscore) {
       player.lifetimebestscore = player.totalscore;
     }
     // increment player level here before saving!
@@ -242,7 +241,7 @@ public class Game : MonoBehaviour {
     music.Play();
     yield return new WaitForSeconds(0.5f);
     levelCompleteUI.SetActive(true);
-    if (ShipCollision.HasTakenDamage) { 
+    if (ShipCollision.HasTakenDamage) {
       flawlessMessage.SetActive(false);
     }
     yield return new WaitForSeconds(20f);
@@ -271,6 +270,5 @@ public class Game : MonoBehaviour {
       Destroy(o);
     }
   }
-  
-  
+
 }
