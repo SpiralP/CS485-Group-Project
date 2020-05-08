@@ -13,10 +13,9 @@ public class EnemyLogic : MonoBehaviour {
   public float bulletSpeed = 10.0f;
   public AudioSource sfx;
   public AudioClip enemyDeath;
-
   private Rigidbody myRigidBody;
   public int gridX, gridY;
-  private uint health = 3;
+  private uint health = 3;  // make public
 
   void Start() {
     myRigidBody = GetComponent<Rigidbody>();
@@ -73,14 +72,17 @@ public class EnemyLogic : MonoBehaviour {
       Destroy(this.gameObject);
     } else
     if (collision.gameObject.tag == "PlayerBullet") {
-      Debug.Log("hit");
-
       Destroy(collision.gameObject);
 
-      if (ShipCollision.PowerPowerupStartTime != 0f || health == 1) {
+      if (ShipCollision.PowerPowerupStartTime != 0f ) {
+        enemyKilledEvent.Invoke(this.gameObject);
+        GM.enemiesKilledPowerfully += 1;
+      }
+      else if (health == 1) {
+        GM.enemiesKilledNormally += 1;
         enemyKilledEvent.Invoke(this.gameObject);
       } else {
-        health -= 1;
+        health -= 1; 
       }
     }
   }
@@ -88,6 +90,7 @@ public class EnemyLogic : MonoBehaviour {
   void EnemyKilled(GameObject enemy) {
     // TODO explosion
     Destroy(enemy);
+    GM.enemiesKilledNormally += 1;
     sfx.clip = enemyDeath;
     sfx.Play();
   }

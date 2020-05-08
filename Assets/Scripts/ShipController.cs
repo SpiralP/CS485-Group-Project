@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShipController : MonoBehaviour
 {
@@ -23,8 +24,6 @@ public class ShipController : MonoBehaviour
   public bool canPlayerMove;
   public bool isInvuln;
 
-  private IEnumerator coroutine;
-
   void Start()
   {
     canPlayerMove = false;
@@ -41,26 +40,22 @@ public class ShipController : MonoBehaviour
 
       if (Input.GetKeyDown("w"))
       {
-        // move up
-        posY = Mathf.Min(posY + 1, Game.gridPositionsY - 1);
+        MoveUp();
       }
       else if (Input.GetKeyDown("s"))
       {
-        posY = Mathf.Max(posY - 1, -1 * Game.gridPositionsY + 1);
+        MoveDown();
       }
       else if (Input.GetKeyDown("a"))
       {
-        posX = Mathf.Max(posX - 1, -1 * Game.gridPositionsX + 1);
+        MoveLeft();
       }
       else if (Input.GetKeyDown("d"))
       {
-        posX = Mathf.Min(posX + 1, Game.gridPositionsX - 1);
+        MoveRight();
       }
 
-      if (Input.GetKeyDown("space"))
-      {
-        StartShooting();
-      }
+
 
       // if we have an armor pickup, we haven't enabled it yet, and key is pressed
       if (
@@ -76,27 +71,30 @@ public class ShipController : MonoBehaviour
 
     }
   }
-
-  void StartShooting()
+  public void MoveUp()
   {
-    if (coroutine != null)
-    {
-      StopShooting();
-    }
-
-    coroutine = FireBullets();
-    StartCoroutine(coroutine);
+    posY = Mathf.Min(posY + 1, Game.gridPositionsY - 1);
   }
 
-  void StopShooting()
+  public void MoveDown()
   {
-    StopCoroutine(coroutine);
-    coroutine = null;
+    posY = Mathf.Max(posY - 1, -1 * Game.gridPositionsY + 1);
   }
 
-  IEnumerator FireBullets()
+  public void MoveLeft()
   {
-    while (canPlayerMove && Input.GetKey("space"))
+    posX = Mathf.Max(posX - 1, -1 * Game.gridPositionsX + 1);
+  }
+
+  public void MoveRight()
+  {
+    posX = Mathf.Min(posX + 1, Game.gridPositionsX - 1);
+  }
+
+
+    public void FireBullet()
+  {
+    if (canPlayerMove)
     {
       if (ShipCollision.PowerPowerupStartTime != 0f) 
       { 
@@ -115,9 +113,6 @@ public class ShipController : MonoBehaviour
       var rigidbody = bullet.GetComponent<Rigidbody>();
       rigidbody.velocity = new Vector3(0f, 0f, 1f * bulletSpeed);
 
-      yield return new WaitForSeconds(0.3f);
     }
-
-    coroutine = null;
   }
 }

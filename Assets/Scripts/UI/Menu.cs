@@ -8,6 +8,7 @@ public class Menu : MonoBehaviour
     public AudioSource SFXSource;
     public AudioClip affirm;
     public AudioClip back;
+    public AudioClip reset;
     public AudioMixer MusicMixer;
     public AudioMixer SFXMixer;
     public Player player;
@@ -37,6 +38,14 @@ public class Menu : MonoBehaviour
     public void BackSound ()
     {
         SFXSource.clip = back;
+        SFXSource.Play();
+    }
+
+    public void Reset()
+    {
+        player.ResetPlayer();
+        player.SavePlayer();
+        SFXSource.clip = reset;
         SFXSource.Play();
     }
 

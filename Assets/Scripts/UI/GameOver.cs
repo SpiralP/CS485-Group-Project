@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class GameOver : MonoBehaviour
 {
@@ -11,10 +13,15 @@ public class GameOver : MonoBehaviour
     public AudioClip negative;
     public AudioClip ambience;
     public Player player;
+    public GameObject scores;
+    public GameObject options;
+    public TextMeshProUGUI score;
+    public TextMeshProUGUI bestscore;
 
     void Start()
     {
-        SaveSystem.LoadPlayer();
+        player.LoadPlayer();
+        SetScoreVals();
         music.clip = gameOverSound;
         music.Play();
         StartCoroutine(WaitTime());
@@ -22,7 +29,11 @@ public class GameOver : MonoBehaviour
 
     IEnumerator WaitTime()
     {
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(3);
+        scores.SetActive(true);
+        yield return new WaitForSeconds(3);
+        options.SetActive(true);
+        yield return new WaitForSeconds(5);
         music.clip = ambience;
         music.loop = true;
         music.Play();
@@ -43,14 +54,20 @@ public class GameOver : MonoBehaviour
     public void YesPressed()
     {
         player.ResetPlayer();
-        SaveSystem.SavePlayer(player);
+        player.SavePlayer();
         SceneManager.LoadScene("Loading");
     }
 
     public void NoPressed()
     {
         player.ResetPlayer();
-        SaveSystem.SavePlayer(player);
+        player.SavePlayer();
         Initiate.Fade("Main Menu", Color.black, 1f);
+    }
+
+    private void SetScoreVals()
+    {
+        score.text = Math.Round(player.totalscore).ToString();
+        bestscore.text = Math.Round(player.lifetimebestscore).ToString();
     }
 }

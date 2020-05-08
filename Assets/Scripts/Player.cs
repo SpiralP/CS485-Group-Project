@@ -5,8 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour {
   public int lives = 3;
   public int currentLevel = 1;
-  public int totalscore = 0;
-  public int lifetimebestscore = 0;
+  public float totalscore = 0f;
+  public float lifetimebestscore = 0f;
 
   public void SavePlayer() {
     SaveSystem.SavePlayer(this);
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour {
     PlayerData data = SaveSystem.LoadPlayer();
     lives = 3;
     currentLevel = 1;
-    totalscore = 0;
+    totalscore = 0f;
     lifetimebestscore = data.lifetimebestscore;
     SavePlayer();
   }

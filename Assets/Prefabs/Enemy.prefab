@@ -95,10 +95,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0aba74178beabdb48963891255a791a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyKilledEvent:
+    m_PersistentCalls:
+      m_Calls: []
   bulletSpawnPos: {fileID: 8420373978166967245}
   bulletPrefab: {fileID: 8555711405900240634, guid: f6ee644c22a5c944b9a7dc8312f0febc,
     type: 3}
   bulletSpeed: 10
+  sfx: {fileID: 0}
+  enemyDeath: {fileID: 0}
   gridX: 0
   gridY: 0
 --- !u!54 &-8212815612528616880

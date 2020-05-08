@@ -6,8 +6,8 @@ using UnityEngine;
 public class PlayerData {
   public int lives;
   public int currentLevel;
-  public int totalscore;
-  public int lifetimebestscore;
+  public float totalscore;
+  public float lifetimebestscore;
 
   public PlayerData(Player player) {
     lives = player.lives;

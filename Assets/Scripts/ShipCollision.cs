@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class ObjectHitShipEvent : UnityEvent<GameObject> { }
@@ -14,7 +14,7 @@ public class ShipDeathEvent : UnityEvent<GameObject> { }
 public class PowerupHitShipEvent : UnityEvent<GameObject> { }
 
 public class ShipCollision : MonoBehaviour {
-
+  public Slider healthbar;
   public static float PowerPowerupStartTime = 0f;
 
   public static bool HasArmorPickup = false;
@@ -22,6 +22,7 @@ public class ShipCollision : MonoBehaviour {
 
   public const uint MaxShipHealth = 3;
   public static uint ShipHealth;
+  public static bool HasTakenDamage = false;
 
   public GameObject parentShipObject;
   public ObjectHitShipEvent objectHitShipEvent;
@@ -35,11 +36,15 @@ public class ShipCollision : MonoBehaviour {
   public AudioClip asteroidHitOnArmor;
   private bool invuln;
   public Player player;
+  public Image powerTimer;
+  public Image armorTimer;
 
   void Start() {
     ShipHealth = 3;
     player.LoadPlayer();
-    Debug.Log("Lives: " + player.lives + ", Health: " + ShipHealth);
+    // reset enemy kill counts to 0
+    GM.enemiesKilledNormally = 0;
+    GM.enemiesKilledPowerfully = 0;
     objectHitShipEvent = new ObjectHitShipEvent();
     objectHitShipEvent.AddListener(ObjectHitShip);
 
@@ -50,15 +55,22 @@ public class ShipCollision : MonoBehaviour {
     powerupHitShipEvent.AddListener(PowerupHitShip);
   }
 
+  void Update()
+  {
+    healthbar.value = ShipHealth;
+  }
+
   void OnCollisionEnter(Collision collision) {
     if (collision.gameObject.tag == "Asteroid" || collision.gameObject.tag == "Bullet" || collision.gameObject.tag == "Enemy") {
       Debug.Log("Hit. Health: " + ShipHealth);
       objectHitShipEvent.Invoke(collision.gameObject);
     }
     if (collision.gameObject.tag == "Armor" || collision.gameObject.tag == "Health" || collision.gameObject.tag == "Power") {
-      //Debug.Log("powerup");
       sfx.clip = powerupGet;
       sfx.Play();
+      if (collision.gameObject.tag == "Power") {
+        powerTimer.GetComponent<AbilityTimer>().ResetAbilityTimer();
+      }
       powerupHitShipEvent.Invoke(collision.gameObject);
     }
   }
@@ -74,11 +86,13 @@ public class ShipCollision : MonoBehaviour {
       }
     }
 
-    // asteroid collision with no armor - instant death
+    // asteroid collision with no armor activated - instant death
     else if (obj.tag == "Asteroid") {
+      healthbar.value = 0;
       sfx.clip = playerDeath;
       sfx.Play();
       shipDeathEvent.Invoke(parentShipObject);
+      HasArmorPickup = false;
 
       // decrement life
       player.lives -= 1;
@@ -88,16 +102,16 @@ public class ShipCollision : MonoBehaviour {
         // if player reaches a new high score in this run, save that to their lifetime best score
         if (player.totalscore > player.lifetimebestscore) {
           player.lifetimebestscore = player.totalscore;
-          player.SavePlayer();
         }
         // load game over scene
+        player.SavePlayer();
         Initiate.Fade("Game Over", Color.black, 0.2f);
       }
-
-      // otherwise, save player data and restart this level
-      player.SavePlayer();
-      Initiate.Fade("Loading", Color.black, 1f);
-
+      else {
+        // otherwise, save player data and restart this level
+        player.SavePlayer();
+        Initiate.Fade("Loading", Color.black, 1f);
+      }
     }
 
     // defeated by enemy ship
@@ -106,9 +120,12 @@ public class ShipCollision : MonoBehaviour {
       // during the flyout cutscene when they have 1 health left
       invuln = parentShipObject.GetComponent<ShipController>().isInvuln;
       if (!invuln) {
+        ShipHealth -= 1;
+        healthbar.value = 0;
         sfx.clip = playerDeath;
         sfx.Play();
         shipDeathEvent.Invoke(parentShipObject);
+        HasArmorPickup = false;
 
         // decrement life
         player.lives -= 1;
@@ -118,15 +135,16 @@ public class ShipCollision : MonoBehaviour {
           // if player reaches a new high score in this run, save that to their lifetime best score
           if (player.totalscore > player.lifetimebestscore) {
             player.lifetimebestscore = player.totalscore;
-            player.SavePlayer();
           }
           // load game over scene
+          player.SavePlayer();
           Initiate.Fade("Game Over", Color.black, 0.2f);
         }
-
-        // otherwise, save player data and restart this level
-        player.SavePlayer();
-        Initiate.Fade("Loading", Color.black, 1f);
+        else {
+          // otherwise, save player data and restart this level
+          player.SavePlayer();
+          Initiate.Fade("Loading", Color.black, 1f);
+        }
       }
     }
 
@@ -134,9 +152,11 @@ public class ShipCollision : MonoBehaviour {
     else {
       invuln = parentShipObject.GetComponent<ShipController>().isInvuln;
       if (!invuln) {
+        HasTakenDamage = true;
         sfx.clip = damageTaken;
         sfx.Play();
         ShipHealth -= 1;
+        player.totalscore -= 300f;
       }
     }
   }
@@ -150,6 +170,7 @@ public class ShipCollision : MonoBehaviour {
     Destroy(powerup);
 
     if (powerup.tag == "Armor") {
+      player.totalscore += 200f;
       // user will store this powerup up and activate it
       // in order to get by a "wall of asteroids"
 
@@ -158,11 +179,11 @@ public class ShipCollision : MonoBehaviour {
     } else if (powerup.tag == "Health") {
       // increase HP
       ShipHealth = Math.Min(MaxShipHealth, ShipHealth + 1);
-      Debug.Log("Got health pickup, new health " + ShipHealth);
+      player.totalscore += 200f;
     } else if (powerup.tag == "Power") {
       // increase bullet damage
       // one hit kill enemies
-
+      player.totalscore += 200f;
       ActivatePowerPowerup();
     }
   }
@@ -174,15 +195,17 @@ public class ShipCollision : MonoBehaviour {
     }
 
     powerPowerupLogic = PowerPowerupLogic();
+    powerTimer.gameObject.SetActive(true);
     StartCoroutine(powerPowerupLogic);
   }
 
   IEnumerator PowerPowerupLogic() {
     PowerPowerupStartTime = Time.time;
 
-    yield return new WaitForSeconds(4.0f);
+    yield return new WaitForSeconds(10.0f);
 
     PowerPowerupStartTime = 0f;
+    powerTimer.gameObject.SetActive(false);
   }
 
   IEnumerator armorPowerupLogic = null;
@@ -194,6 +217,7 @@ public class ShipCollision : MonoBehaviour {
     HasArmorPickup = false;
 
     armorPowerupLogic = ArmorPowerupLogic();
+    armorTimer.gameObject.SetActive(true);
     StartCoroutine(armorPowerupLogic);
   }
 
@@ -205,5 +229,6 @@ public class ShipCollision : MonoBehaviour {
     yield return new WaitForSeconds(3.0f);
 
     ArmorPowerupStartTime = 0f;
+    armorTimer.gameObject.SetActive(false);
   }
 }

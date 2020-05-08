@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 public class Game : MonoBehaviour {
 
@@ -38,14 +41,20 @@ public class Game : MonoBehaviour {
   public GameObject playerShip;
   public AudioClip button;
   public AudioClip enemyKilled;
+  public AudioClip finishedLoop;
   public GameObject levelCompleteUI;
   private Vector3 center = new Vector3(0f, 0f, 0f);
   public float endTime;
+  public Player player;
+  public TextMeshProUGUI scoreDisplay;
+  public GameObject flawlessMessage;
+  public Button armorButton;
 
   private bool didBigWall = false;
   private bool doingBigWall = false;
 
   void Start() {
+    player.LoadPlayer();
     music.clip = gameSong;
     music.Play();
     stepX = (movementPlane.localScale.x * 5f) / gridPositionsX;
@@ -61,25 +70,37 @@ public class Game : MonoBehaviour {
   void Update() {
     currentTime += Time.deltaTime;
     elapsedTime += Time.deltaTime;
+    Debug.Log(elapsedTime);
+    scoreDisplay.text = Math.Round(player.totalscore).ToString();
 
-    if (!didBigWall && elapsedTime > endTime * 0.8) {
+    if (!didBigWall && elapsedTime > endTime * 0.5) {
       didBigWall = true;
       doingBigWall = true;
-
       StartCoroutine(DoBigWall());
     }
 
     if (doingBigWall) {
       return;
     }
+    if (player.currentLevel == 1 && player.totalscore > 0f && elapsedTime < 6.0f) { 
+        player.totalscore = 0f;
+    }
 
+    if (ShipCollision.HasArmorPickup && !PauseMenu.GameIsPaused) {
+      armorButton.gameObject.SetActive(true);
+    }
+    else {
+      armorButton.gameObject.SetActive(false);
+    }
+    
     // start spawning asteroids after cutscene ends
     if (elapsedTime > 6.0f && elapsedTime < endTime) {
+      player.totalscore += Time.deltaTime * 100f;
       if (currentTime > spawnInterval) {
         currentTime = 0f;
 
-        var gridX = Random.Range(-gridPositionsX + 1, gridPositionsX);
-        var gridY = Random.Range(-gridPositionsY + 1, gridPositionsY);
+        var gridX = UnityEngine.Random.Range(-gridPositionsX + 1, gridPositionsX);
+        var gridY = UnityEngine.Random.Range(-gridPositionsY + 1, gridPositionsY);
 
         if (OccupiedGrid.Contains(new Vector2(gridX, gridY))) {
           return;
@@ -90,10 +111,10 @@ public class Game : MonoBehaviour {
           gridY * stepY,
           spawnPosition.position.z
         );
-
-        if (Random.Range(0, 8) == 0) {
+        // make 8 public variable
+        if (UnityEngine.Random.Range(0, 8) == 0) {
           // an enemy
-          // int enemyIndex = Random.Range(0, enemyPrefabs.Length);
+          // int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
           GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.Euler(0, 180, 0));
           Destroy(enemy, 30f);
 
@@ -105,9 +126,9 @@ public class Game : MonoBehaviour {
 
           Rigidbody body = enemy.GetComponent<Rigidbody>();
           body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
-        } else if (Random.Range(0, 10) == 0) {
+        } else if (UnityEngine.Random.Range(0, 12) == 0) {
           // powerup
-          GameObject powerup = Instantiate(powerupPrefabs[Random.Range(0, powerupPrefabs.Length)], pos, Quaternion.identity);
+          GameObject powerup = Instantiate(powerupPrefabs[UnityEngine.Random.Range(0, powerupPrefabs.Length)], pos, Quaternion.identity);
           Rigidbody body = powerup.GetComponent<Rigidbody>();
           body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
         } else {
@@ -123,7 +144,7 @@ public class Game : MonoBehaviour {
 
   void SpawnAsteroid(Vector3 pos) {
     // an asteroid
-    int asteroidIndex = Random.Range(0, asteroidPrefabs.Length);
+    int asteroidIndex = UnityEngine.Random.Range(0, asteroidPrefabs.Length);
     GameObject asteroid = Instantiate(asteroidPrefabs[asteroidIndex], pos, Quaternion.identity);
     Destroy(asteroid, 30f);
 
@@ -143,8 +164,8 @@ public class Game : MonoBehaviour {
       int gridY;
 
       do {
-        gridX = Random.Range(-gridPositionsX + 1, gridPositionsX);
-        gridY = Random.Range(-gridPositionsY + 1, gridPositionsY);
+        gridX = UnityEngine.Random.Range(-gridPositionsX + 1, gridPositionsX);
+        gridY = UnityEngine.Random.Range(-gridPositionsY + 1, gridPositionsY);
       } while (OccupiedGrid.Contains(new Vector2(gridX, gridY)));
 
       var pos = new Vector3(
@@ -192,6 +213,7 @@ public class Game : MonoBehaviour {
     yield return new WaitForSeconds(2);
     playerShip.transform.position = center;
     ClearBoardOnVictory();
+    Debug.Log(GM.enemiesKilledNormally + ", " + GM.enemiesKilledPowerfully);  // test if enemy killcount works
     exitcam.SetActive(true);
     gameCam.SetActive(false);
     GameObject.Find("Player Ship").GetComponent<Animation>().Play();
@@ -201,10 +223,32 @@ public class Game : MonoBehaviour {
     yield return new WaitForSeconds(3);
     playerShip.SetActive(false);
     music.Stop();
+    player.totalscore += 10000f; // make public?
+    if (!ShipCollision.HasTakenDamage) { 
+        // bonus for no damage taken
+        player.totalscore += 5000f;
+    }
+    Debug.Log(player.totalscore + " before");
+    // add points for how many enemies killed
+    player.totalscore += (GM.enemiesKilledNormally * 500f);
+    player.totalscore += (GM.enemiesKilledPowerfully * 1000f);
+    Debug.Log(player.totalscore + " after");
+    if (player.totalscore > player.lifetimebestscore) { 
+      player.lifetimebestscore = player.totalscore;
+    }
+    // increment player level here before saving!
+    player.SavePlayer();
     music.clip = outroSong;
     music.Play();
     yield return new WaitForSeconds(0.5f);
     levelCompleteUI.SetActive(true);
+    if (ShipCollision.HasTakenDamage) { 
+      flawlessMessage.SetActive(false);
+    }
+    yield return new WaitForSeconds(20f);
+    music.clip = finishedLoop;
+    music.loop = true;
+    music.Play();
   }
 
   public void ReturnToMainMenu() {
@@ -227,4 +271,6 @@ public class Game : MonoBehaviour {
       Destroy(o);
     }
   }
+  
+  
 }

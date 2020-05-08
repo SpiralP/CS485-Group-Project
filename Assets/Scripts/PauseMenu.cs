@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -11,6 +12,22 @@ public class PauseMenu : MonoBehaviour
 
     // UI stuff to hide while game is paused
     public GameObject pauseIcon;
+    public Slider healthbar;
+    public GameObject livesIcon;
+    public GameObject livesCounter;
+    public GameObject fireButton;
+    public GameObject upButton;
+    public GameObject upGraphic;
+    public GameObject leftButton;
+    public GameObject leftGraphic;
+    public GameObject rightButton;
+    public GameObject rightGraphic;
+    public GameObject downButton;
+    public GameObject downGraphic;
+    public GameObject armorButton;
+    public GameObject powerTimer;
+    public GameObject armorTimer;
+
 
     public void Resume()
     {
@@ -23,6 +40,30 @@ public class PauseMenu : MonoBehaviour
 
         // show UI elements again
         pauseIcon.SetActive(true);
+        healthbar.gameObject.SetActive(true);
+        livesIcon.SetActive(true);
+        livesCounter.SetActive(true);
+        fireButton.SetActive(true);
+        upButton.SetActive(true);
+        upGraphic.SetActive(true);
+        rightButton.SetActive(true);
+        rightGraphic.SetActive(true);
+        leftButton.SetActive(true);
+        leftGraphic.SetActive(true);
+        downButton.SetActive(true);
+        downGraphic.SetActive(true);
+        if (ShipCollision.HasArmorPickup)
+        {
+            armorButton.SetActive(true);
+        }
+        if (ShipCollision.ArmorPowerupStartTime != 0f)
+        {
+            armorTimer.SetActive(true);
+        }
+        if (ShipCollision.PowerPowerupStartTime != 0f)
+        {
+            powerTimer.SetActive(true);
+        }
     }
 
     public void Pause()
@@ -35,7 +76,22 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = true;
 
         // hide UI elements
+        armorButton.SetActive(false);
         pauseIcon.SetActive(false);
+        healthbar.gameObject.SetActive(false);
+        livesIcon.SetActive(false);
+        livesCounter.SetActive(false);
+        fireButton.SetActive(false);
+        upButton.SetActive(false);
+        upGraphic.SetActive(false);
+        rightButton.SetActive(false);
+        rightGraphic.SetActive(false);
+        leftButton.SetActive(false);
+        leftGraphic.SetActive(false);
+        downButton.SetActive(false);
+        downGraphic.SetActive(false);
+        armorTimer.SetActive(false);
+        powerTimer.SetActive(false);
     }
 
     public void Return()
