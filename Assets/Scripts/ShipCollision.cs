@@ -122,7 +122,7 @@ public class ShipCollision : MonoBehaviour {
     }
 
     // defeated by enemy ship
-    else if ((ShipHealth == 1 && enemyDamage == 1) || (ShipHealth == 2 && enemyDamage == 2)) {
+    else if ((ShipHealth == 1 && enemyDamage == 1) || (ShipHealth == 2 && enemyDamage == 2) || (ShipHealth == 1 && enemyDamage == 2)) {
       // invuln checks are for if the player clears the level, but a stray enemy bullet may still hit them
       // during the flyout cutscene when they have 1 health left
       invuln = parentShipObject.GetComponent<ShipController>().isInvuln;
