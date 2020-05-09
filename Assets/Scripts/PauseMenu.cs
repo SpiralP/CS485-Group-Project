@@ -99,6 +99,12 @@ public class PauseMenu : MonoBehaviour
         sfx.clip = resume;
         sfx.Play();
         Time.timeScale = 1f;
+        // reset killcounts
+        GM.totalEnemiesKilled -= (GM.enemiesKilledNormally + GM.enemiesKilledPowerfully);
+        GM.totalPowerupsCollected -= GM.powerupsCollected;
+        GM.enemiesKilledNormally = 0;
+        GM.enemiesKilledPowerfully = 0;
+        GM.powerupsCollected = 0;
         Initiate.Fade("Main Menu", Color.black, 1f);
     }
 }

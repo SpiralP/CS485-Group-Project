@@ -23,8 +23,6 @@ public class Game : MonoBehaviour {
   public GameObject[] asteroidPrefabs;
   public Transform spawnPosition;
   public Transform movementPlane;
-  public float spawnInterval = 0.3f;
-  public float asteroidSpeed = 20f;
   private float currentTime = 0f;
   private float elapsedTime = 0f;
   private float stepX;
@@ -44,14 +42,22 @@ public class Game : MonoBehaviour {
   public AudioClip finishedLoop;
   public GameObject levelCompleteUI;
   private Vector3 center = new Vector3(0f, 0f, 0f);
-  public float endTime;
   public Player player;
   public TextMeshProUGUI scoreDisplay;
   public GameObject flawlessMessage;
   public Button armorButton;
-
   private bool didBigWall = false;
   private bool doingBigWall = false;
+
+  // interchangable level variables
+  public float asteroidSpeed;
+  public float endTime;
+  public float spawnInterval;
+  public float victoryPointBonus;
+  public float flawlessPointBonus;
+  public int powerupSpawnChance;
+  public int enemySpawnChance;
+  public uint enemyHP;
 
   void Start() {
     player.LoadPlayer();
@@ -65,12 +71,17 @@ public class Game : MonoBehaviour {
     levelComplete = false;
     didBigWall = false;
     doingBigWall = false;
+    if (ShipCollision.ArmorPowerupStartTime != 0f)
+    {
+      ShipCollision.ArmorPowerupStartTime = 0f;
+    }
   }
 
   void Update() {
+    Debug.Log("Total KC: " + GM.totalEnemiesKilled + ", Total P: " + GM.totalPowerupsCollected + ", Curr NKC: " + GM.enemiesKilledNormally + ", Curr PKC: " + GM.enemiesKilledPowerfully + ", Curr P: " + GM.powerupsCollected);
+
     currentTime += Time.deltaTime;
     elapsedTime += Time.deltaTime;
-    Debug.Log(elapsedTime);
     scoreDisplay.text = Math.Round(player.totalscore).ToString();
 
     if (!didBigWall && elapsedTime > endTime * 0.5) {
@@ -110,8 +121,7 @@ public class Game : MonoBehaviour {
           gridY * stepY,
           spawnPosition.position.z
         );
-        // make 8 public variable
-        if (UnityEngine.Random.Range(0, 8) == 0) {
+        if (UnityEngine.Random.Range(0, enemySpawnChance) == 0) {
           // an enemy
           // int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
           GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.Euler(0, 180, 0));
@@ -122,10 +132,11 @@ public class Game : MonoBehaviour {
           enemyLogic.gridY = gridY;
           enemyLogic.sfx = sfx;
           enemyLogic.enemyDeath = enemyKilled;
+          enemyLogic.health = enemyHP;
 
           Rigidbody body = enemy.GetComponent<Rigidbody>();
           body.velocity = new Vector3(0f, 0f, -1f * asteroidSpeed);
-        } else if (UnityEngine.Random.Range(0, 12) == 0) {
+        } else if (UnityEngine.Random.Range(0, powerupSpawnChance) == 0) {
           // powerup
           GameObject powerup = Instantiate(powerupPrefabs[UnityEngine.Random.Range(0, powerupPrefabs.Length)], pos, Quaternion.identity);
           Rigidbody body = powerup.GetComponent<Rigidbody>();
@@ -158,7 +169,6 @@ public class Game : MonoBehaviour {
 
     // spawn armor powerup
     {
-      Debug.Log("spawning armor powerup");
       int gridX;
       int gridY;
 
@@ -180,7 +190,6 @@ public class Game : MonoBehaviour {
 
     yield return new WaitForSeconds(1.0f);
 
-    Debug.Log("spawning wall");
     for (int gridX = -gridPositionsX + 1; gridX < gridPositionsX; gridX++) {
       for (int gridY = -gridPositionsY + 1; gridY < gridPositionsY; gridY++) {
         // if (OccupiedGrid.Contains(new Vector2(gridX, gridY))) {
@@ -212,7 +221,6 @@ public class Game : MonoBehaviour {
     yield return new WaitForSeconds(2);
     playerShip.transform.position = center;
     ClearBoardOnVictory();
-    Debug.Log(GM.enemiesKilledNormally + ", " + GM.enemiesKilledPowerfully); // test if enemy killcount works
     exitcam.SetActive(true);
     gameCam.SetActive(false);
     GameObject.Find("Player Ship").GetComponent<Animation>().Play();
@@ -222,21 +230,35 @@ public class Game : MonoBehaviour {
     yield return new WaitForSeconds(3);
     playerShip.SetActive(false);
     music.Stop();
-    player.totalscore += 10000f; // make public?
+
+    player.totalscore += victoryPointBonus;
     if (!ShipCollision.HasTakenDamage) {
       // bonus for no damage taken
-      player.totalscore += 5000f;
+      player.totalscore += flawlessPointBonus;
     }
-    Debug.Log(player.totalscore + " before");
+
     // add points for how many enemies killed
     player.totalscore += (GM.enemiesKilledNormally * 500f);
     player.totalscore += (GM.enemiesKilledPowerfully * 1000f);
-    Debug.Log(player.totalscore + " after");
+
+    // store this score. If the player dies in the next level, it will reset to this score
+    GM.savedPlayerTotalScore = player.totalscore;
+
+    // reset level killcounts
+    GM.enemiesKilledNormally = 0;
+    GM.enemiesKilledPowerfully = 0;
+    GM.powerupsCollected = 0;
+
+    // check for new highscore
     if (player.totalscore > player.lifetimebestscore) {
       player.lifetimebestscore = player.totalscore;
     }
-    // increment player level here before saving!
+    // increment player level
+    if (player.currentLevel != 4) {
+      player.currentLevel += 1;
+    }
     player.SavePlayer();
+
     music.clip = outroSong;
     music.Play();
     yield return new WaitForSeconds(0.5f);
@@ -251,12 +273,16 @@ public class Game : MonoBehaviour {
   }
 
   public void ReturnToMainMenu() {
-    // save game here
     Initiate.Fade("Main Menu", Color.black, 1f);
   }
 
   public void NextLevel() {
-    // load current level index + 1
+    Initiate.Fade("Loading", Color.black, 1f);
+  }
+
+  // finish game button - go to beaten the game screen
+  public void ResultsScreen() { 
+    Initiate.Fade("Results Screen", Color.black, 0.5f);  
   }
 
   public void ButtonSound() {

@@ -15,7 +15,7 @@ public class EnemyLogic : MonoBehaviour {
   public AudioClip enemyDeath;
   private Rigidbody myRigidBody;
   public int gridX, gridY;
-  private uint health = 3; // make public
+  public uint health;
 
   void Start() {
     myRigidBody = GetComponent<Rigidbody>();
@@ -91,7 +91,7 @@ public class EnemyLogic : MonoBehaviour {
 
     // TODO explosion
     Destroy(enemy);
-    GM.enemiesKilledNormally += 1;
+    GM.totalEnemiesKilled += 1;
     sfx.clip = enemyDeath;
     sfx.Play();
   }

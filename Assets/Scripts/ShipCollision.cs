@@ -38,13 +38,12 @@ public class ShipCollision : MonoBehaviour {
   public Player player;
   public Image powerTimer;
   public Image armorTimer;
+  public uint enemyDamage;
 
   void Start() {
     ShipHealth = 3;
     player.LoadPlayer();
-    // reset enemy kill counts to 0
-    GM.enemiesKilledNormally = 0;
-    GM.enemiesKilledPowerfully = 0;
+    PowerPowerupStartTime = 0f;
     objectHitShipEvent = new ObjectHitShipEvent();
     objectHitShipEvent.AddListener(ObjectHitShip);
 
@@ -104,23 +103,31 @@ public class ShipCollision : MonoBehaviour {
           player.lifetimebestscore = player.totalscore;
         }
         // load game over scene
+        GM.totalEnemiesKilled = 0;
+        GM.totalPowerupsCollected = 0;
         player.SavePlayer();
         Initiate.Fade("Game Over", Color.black, 0.2f);
       }
       else {
-        // otherwise, save player data and restart this level
+        // otherwise, reset killcounts, save player data and restart this level
+        GM.totalEnemiesKilled -= (GM.enemiesKilledNormally + GM.enemiesKilledPowerfully);
+        GM.totalPowerupsCollected -= GM.powerupsCollected;
+        GM.enemiesKilledNormally = 0;
+        GM.enemiesKilledPowerfully = 0;
+        GM.powerupsCollected = 0;
+        player.totalscore = GM.savedPlayerTotalScore;
         player.SavePlayer();
         Initiate.Fade("Loading", Color.black, 1f);
       }
     }
 
     // defeated by enemy ship
-    else if (ShipHealth == 1) {
+    else if ((ShipHealth == 1 && enemyDamage == 1) || (ShipHealth == 2 && enemyDamage == 2)) {
       // invuln checks are for if the player clears the level, but a stray enemy bullet may still hit them
       // during the flyout cutscene when they have 1 health left
       invuln = parentShipObject.GetComponent<ShipController>().isInvuln;
       if (!invuln) {
-        ShipHealth -= 1;
+        ShipHealth -= enemyDamage;
         healthbar.value = 0;
         sfx.clip = playerDeath;
         sfx.Play();
@@ -137,11 +144,19 @@ public class ShipCollision : MonoBehaviour {
             player.lifetimebestscore = player.totalscore;
           }
           // load game over scene
+          GM.totalEnemiesKilled = 0;
+          GM.totalPowerupsCollected = 0;
           player.SavePlayer();
           Initiate.Fade("Game Over", Color.black, 0.2f);
         }
         else {
-          // otherwise, save player data and restart this level
+          // otherwise, reset killcounts, save player data and restart this level
+          GM.totalEnemiesKilled -= (GM.enemiesKilledNormally + GM.enemiesKilledPowerfully);
+          GM.totalPowerupsCollected -= GM.powerupsCollected;
+          GM.enemiesKilledNormally = 0;
+          GM.enemiesKilledPowerfully = 0;
+          GM.powerupsCollected = 0;
+          player.totalscore = GM.savedPlayerTotalScore;
           player.SavePlayer();
           Initiate.Fade("Loading", Color.black, 1f);
         }
@@ -152,10 +167,11 @@ public class ShipCollision : MonoBehaviour {
     else {
       invuln = parentShipObject.GetComponent<ShipController>().isInvuln;
       if (!invuln) {
+        GM.isAFlawlessRun = false;
         HasTakenDamage = true;
         sfx.clip = damageTaken;
         sfx.Play();
-        ShipHealth -= 1;
+        ShipHealth -= enemyDamage;
         player.totalscore -= 300f;
       }
     }
@@ -170,6 +186,8 @@ public class ShipCollision : MonoBehaviour {
     Destroy(powerup);
 
     if (powerup.tag == "Armor") {
+      GM.powerupsCollected += 1;
+      GM.totalPowerupsCollected += 1;
       player.totalscore += 200f;
       // user will store this powerup up and activate it
       // in order to get by a "wall of asteroids"
@@ -178,11 +196,15 @@ public class ShipCollision : MonoBehaviour {
       HasArmorPickup = true;
     } else if (powerup.tag == "Health") {
       // increase HP
+      GM.powerupsCollected += 1;
+      GM.totalPowerupsCollected += 1;
       ShipHealth = Math.Min(MaxShipHealth, ShipHealth + 1);
       player.totalscore += 200f;
     } else if (powerup.tag == "Power") {
       // increase bullet damage
       // one hit kill enemies
+      GM.powerupsCollected += 1;
+      GM.totalPowerupsCollected += 1;
       player.totalscore += 200f;
       ActivatePowerPowerup();
     }

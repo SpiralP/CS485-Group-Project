@@ -31,5 +31,12 @@ public class Player : MonoBehaviour {
     totalscore = 0f;
     lifetimebestscore = data.lifetimebestscore;
     SavePlayer();
+    GM.enemiesKilledNormally = 0;
+    GM.enemiesKilledPowerfully = 0;
+    GM.totalEnemiesKilled = 0;
+    GM.powerupsCollected = 0;
+    GM.totalPowerupsCollected = 0;
+    GM.savedPlayerTotalScore = 0f;
+    GM.isAFlawlessRun = true;
   }
 }

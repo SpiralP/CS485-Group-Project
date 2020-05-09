@@ -762,7 +762,29 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 233547565}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 644252896}
+        m_MethodName: ButtonSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 644252896}
+        m_MethodName: NextLevel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &233547565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -834,8 +856,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -338.2, y: -238.6}
-  m_SizeDelta: {x: 293.1, y: 447.2}
+  m_AnchoredPosition: {x: -299, y: -238.6}
+  m_SizeDelta: {x: 377.5, y: 447.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &234070500
 MonoBehaviour:
@@ -962,8 +984,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -614.093, y: 8.473694}
-  m_SizeDelta: {x: 287.1, y: 325.3}
+  m_AnchoredPosition: {x: -608.4, y: 26.8}
+  m_SizeDelta: {x: 377.8, y: 461.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &244811927
 MonoBehaviour:
@@ -2007,8 +2029,6 @@ MonoBehaviour:
   - {fileID: 193304, guid: 197689c139fb671489c4faec41b5fb80, type: 3}
   spawnPosition: {fileID: 1404297995}
   movementPlane: {fileID: 388298719}
-  spawnInterval: 0.25
-  asteroidSpeed: 25
   sfx: {fileID: 1188775786}
   music: {fileID: 1705394131}
   finish: {fileID: 8300000, guid: 5e479ebcf84534cb5aae50e77610287b, type: 3}
@@ -2022,11 +2042,18 @@ MonoBehaviour:
   enemyKilled: {fileID: 8300000, guid: f746f34dcb8774f468e924319a486fc4, type: 3}
   finishedLoop: {fileID: 8300000, guid: 622e323c33cdade40900afd3e423d143, type: 3}
   levelCompleteUI: {fileID: 719560962}
-  endTime: 40
   player: {fileID: 1748767427}
   scoreDisplay: {fileID: 1824939730}
   flawlessMessage: {fileID: 787475550}
   armorButton: {fileID: 1740413514}
+  asteroidSpeed: 25
+  endTime: 100
+  spawnInterval: 0.5
+  victoryPointBonus: 10000
+  flawlessPointBonus: 10000
+  powerupSpawnChance: 10
+  enemySpawnChance: 8
+  enemyHP: 3
 --- !u!4 &644252897
 Transform:
   m_ObjectHideFlags: 0
@@ -3557,6 +3584,7 @@ MonoBehaviour:
   player: {fileID: 1748767427}
   powerTimer: {fileID: 1897471143}
   armorTimer: {fileID: 811602737}
+  enemyDamage: 1
 --- !u!1 &967123903
 GameObject:
   m_ObjectHideFlags: 0
@@ -4382,8 +4410,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -614.093, y: -488}
-  m_SizeDelta: {x: 424.5, y: 325.3}
+  m_AnchoredPosition: {x: -608.3, y: -461.4}
+  m_SizeDelta: {x: 412.1, y: 382.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1341536327
 MonoBehaviour:
@@ -6386,8 +6414,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -881, y: -238.6}
-  m_SizeDelta: {x: 287.1, y: 447.2}
+  m_AnchoredPosition: {x: -881, y: -217.8}
+  m_SizeDelta: {x: 287.1, y: 407.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1820004933
 MonoBehaviour:
